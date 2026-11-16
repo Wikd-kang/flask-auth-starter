@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}用户管理{% endblock %}
+{% block body %}
+<div class="card">
+  <h1>用户管理</h1>
+  <p class="sub">可以禁用账号。被禁用的用户下一个请求就会掉线（因为每次请求都查库）。</p>
+
+  <table>
+    <thead>
+      <tr><th>ID</th><th>用户名</th><th>权限</th><th>状态</th><th>创建时间</th><th>操作</th></tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.username }}</td>
+        <td>{% if u.is_admin %}<span class="tag">管理员</span>{% else %}普通{% endif %}</td>
+        <td>{% if u.is_active %}<span class="tag ok">正常</span>{% else %}<span class="tag err">已禁用</span>{% endif %}</td>
+        <td>{{ u.created_at }}</td>
+        <td>
+          {% if u.id != current_user.id %}
+          <form method="post" action="{{ url_for('auth.toggle_user', uid=u.id) }}" class="inline">
+            <button class="mini {{ 'danger' if u.is_active else '' }}" type="submit">
+              {{ '禁用' if u.is_active else '启用' }}
+            </button>
+          </form>
+          {% else %}
+          <span class="muted">（自己）</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>最近 30 条登录记录</h2>
+  <table>
+    <thead>
+      <tr><th>时间</th><th>用户名</th><th>IP</th><th>结果</th></tr>
+    </thead>
+    <tbody>
+      {% for l in logs %}
+      <tr>
+        <td>{{ l.created_at }}</td>
+        <td>{{ l.username }}</td>
+        <td>{{ l.ip or '—' }}</td>
+        <td>{% if l.ok %}<span class="tag ok">成功</span>{% else %}<span class="tag err">失败</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

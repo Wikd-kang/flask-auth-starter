@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}面板{% endblock %}
+{% block body %}
+<div class="card">
+  <h1>你好，{{ current_user.username }}</h1>
+  <p class="sub">这是一个演示面板。换成客户自己的业务页面即可，登录/权限部分不用动。</p>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="k">账号创建于</span>
+      <span class="v">{{ current_user.created_at }}</span>
+    </div>
+    <div class="stat">
+      <span class="k">上次登录</span>
+      <span class="v">{{ current_user.last_login_at or '—' }}</span>
+    </div>
+    <div class="stat">
+      <span class="k">上次登录 IP</span>
+      <span class="v">{{ current_user.last_login_ip or '—' }}</span>
+    </div>
+    <div class="stat">
+      <span class="k">权限</span>
+      <span class="v">{{ '管理员' if current_user.is_admin else '普通用户' }}</span>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>我的最近登录记录</h2>
+  {% if logs %}
+  <table>
+    <thead>
+      <tr><th>时间</th><th>IP</th><th>结果</th></tr>
+    </thead>
+    <tbody>
+      {% for l in logs %}
+      <tr>
+        <td>{{ l.created_at }}</td>
+        <td>{{ l.ip or '—' }}</td>
+        <td>{% if l.ok %}<span class="tag ok">成功</span>{% else %}<span class="tag err">失败</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">还没有记录。</p>
+  {% endif %}
+</div>
+{% endblock %}
