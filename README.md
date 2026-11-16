@@ -97,6 +97,18 @@ python tests/selftest.py
 锁定期内正确密码也拒绝、普通用户访问管理页得到 403、改密后旧密码失效、管理员禁用用户后对方立即掉线、
 被禁用账号无法登录、管理员不能禁用自己、记住我与会话有效期、密码确实是哈希、登录日志成功/失败都有记录。
 
+## 部署
+
+Render 免费方案：
+
+1. New → Web Service，语言选 Python
+2. Build Command：`pip install -r requirements.txt`
+3. Start Command：`gunicorn app:app`
+4. 环境变量：`AUTH_SECRET_KEY`（必填，随机 32 字节 hex）、`AUTH_ADMIN_PASSWORD`、`AUTH_DB_PATH`
+5. 免费实例 15 分钟无访问休眠，冷启动约 50 秒，且无持久磁盘（重新部署后 DB 重置）
+
+任何支持 Python 的服务器都能跑 `gunicorn app:app`。
+
 ## 已知限制
 
 - 没有找回密码邮件（需要 SMTP 配置，属于接入方的事）
